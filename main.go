@@ -55,7 +55,7 @@ func main() {
 	numWorkers := binding.NewInt()
 	maxRequestsPerSecond := binding.NewInt()
 
-	numWorkers.Set(1000)
+	numWorkers.Set(500)
 	maxRequestsPerSecond.Set(1000)
 
 	nEntry := widget.NewEntryWithData(binding.IntToString(numWorkers))
