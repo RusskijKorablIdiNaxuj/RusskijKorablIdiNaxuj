@@ -26,16 +26,14 @@ jobs:
       with:
         files: fyne-cross/dist/android/RusskijKorablIdiNaxuj.apk
     - name: Calculate checksum
-      run: sha256sum fyne-cross/dist/android/RusskijKorablIdiNaxuj.apk >fyne-cross/dist/android/RusskijKorablIdiNaxuj.apk.sha256
+      run: sha256sum fyne-cross/dist/android/RusskijKorablIdiNaxuj.apk >fyne-cross/dist/android/RusskijKorablIdiNaxuj.apk.sha256.txt
     - name: Upload checksum
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: fyne-cross/dist/android/RusskijKorablIdiNaxuj.apk.sha256
-  build_gui:
-    strategy:
-      matrix:
-        os: [linux, windows]
+        files: fyne-cross/dist/android/RusskijKorablIdiNaxuj.apk.sha256.txt
+        
+  build_gui_win:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -48,17 +46,44 @@ jobs:
     - name: Install Fyne
       run: go install fyne.io/fyne/v2/cmd/fyne@latest
     - name: Build
-      run: fyne-cross ${{matrix.os}} -app-id naxuj.idi.korabl.vojennyj.russkij
+      run: fyne-cross windows -app-id naxuj.idi.korabl.vojennyj.russkij
     - name: Release
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: fyne-cross/dist/${{matrix.os}}-amd64/RusskijKorablIdiNaxuj.*
+        files: fyne-cross/dist/windows-amd64/RusskijKorablIdiNaxuj.exe.zip
     - name: Calculate checksum
-      run: sha256sum fyne-cross/dist/${{matrix.os}}-amd64/RusskijKorablIdiNaxuj.apk >fyne-cross/dist/${{matrix.os}}-amd64/RusskijKorablIdiNaxuj-${{matrix.os}}.sha256
+      run: sha256sum fyne-cross/dist/windows-amd64/RusskijKorablIdiNaxuj.exe.zip >fyne-cross/dist/windows-amd64/RusskijKorablIdiNaxuj-windows.sha256.txt
     - name: Upload checksum
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-        files: fyne-cross/dist/${{matrix.os}}-amd64/RusskijKorablIdiNaxuj-${{matrix.os}}.sha256
+        files: fyne-cross/dist/windows-amd64/RusskijKorablIdiNaxuj-windows.sha256.txt
+
+  build_gui_linux:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+    - name: Prepare cross compilation
+      run: go install github.com/fyne-io/fyne-cross@latest
+    - name: Install Fyne
+      run: go install fyne.io/fyne/v2/cmd/fyne@latest
+    - name: Build
+      run: fyne-cross linux -app-id naxuj.idi.korabl.vojennyj.russkij
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: fyne-cross/dist/linux-amd64/RusskijKorablIdiNaxuj.tar.xz
+    - name: Calculate checksum
+      run: sha256sum fyne-cross/dist/linux-amd64/RusskijKorablIdiNaxuj.tar.xz >fyne-cross/dist/linux-amd64/RusskijKorablIdiNaxuj-linux.sha256.txt
+    - name: Upload checksum
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: fyne-cross/dist/linux-amd64/RusskijKorablIdiNaxuj-linux.sha256.txt
 
