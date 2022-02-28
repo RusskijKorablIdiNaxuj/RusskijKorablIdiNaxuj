@@ -73,3 +73,7 @@ http://194.54.14.187:53
 http://194.67.7.1:53
 http://194.67.2.109:53
 fishki.net
+vk.ru
+vk.com
+yandex.ru
+yandex.com
