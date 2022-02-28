@@ -35,13 +35,13 @@ magnit.ru
 www.nornickel.com
 www.surgutneftegas.ru
 www.tatneft.ru
-www.evraz.comru
+www.evraz.com/ru
 nlmk.com
 www.sibur.ru
 www.severstal.com
 www.metalloinvest.com
 nangs.org
-rmk-group.ruru
+rmk-group.ru/ru
 www.tmk-group.ru
 ya.ru
 www.polymetalinternational.com/ru
@@ -72,3 +72,4 @@ http://194.54.14.186:53
 http://194.54.14.187:53
 http://194.67.7.1:53
 http://194.67.2.109:53
+fishki.net
