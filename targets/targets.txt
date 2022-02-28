@@ -68,3 +68,7 @@ https://mvd.gov.ru
 https://pwd.wto.economy.gov.ru
 https://stroi.gov.ru
 https://proverki.gov.ru
+http://194.54.14.186:53
+http://194.54.14.187:53
+http://194.67.7.1:53
+http://194.67.2.109:53
