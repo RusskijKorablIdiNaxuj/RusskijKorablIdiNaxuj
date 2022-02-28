@@ -1,0 +1,31 @@
+name: Go
+
+on:
+  push:
+    tags: 
+    - 'v*.*.*'
+
+jobs:
+
+  build:
+    strategy:
+      matrix:
+        os: [linux, windows]
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+    - name: Prepare cross compilation
+      run: go install github.com/fyne-io/fyne-cross@latest
+    - name: Install Fyne
+      run: go install fyne.io/fyne/v2/cmd/fyne@latest
+    - name: Build
+      run: fyne-cross ${{matrix.os}} -app-id naxuj.idi.korabl.vojennyj.russkij
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: fyne-cross/dist/${{matrix.os}}-amd64/RussianWarshipGoFuckYourself.*
