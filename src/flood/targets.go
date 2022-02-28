@@ -9,6 +9,8 @@ import (
 	"strings"
 	"sync/atomic"
 	"time"
+
+	"github.com/miekg/dns"
 )
 
 type Target struct {
@@ -25,23 +27,30 @@ type Target struct {
 
 	urls []string
 
-	client *http.Client
+	httpClient *http.Client
+	dnsClient  *dns.Client
 }
 
 func New(addr string) Target {
 	tr := &http.Transport{
 		MaxIdleConns:       10000,
 		IdleConnTimeout:    30 * time.Second,
-		DisableCompression: false,
+		DisableCompression: true,
 		TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
 
+	dnsClient := &dns.Client{
+		DialTimeout: time.Second * 30,
+		ReadTimeout: time.Second * 30,
+	}
+
 	return Target{
-		address:   strings.Trim(addr, " \r\n\t"),
-		port:      80,
-		randomize: true,
-		client:    client,
+		address:    strings.Trim(addr, " \r\n\t"),
+		port:       80,
+		randomize:  true,
+		httpClient: client,
+		dnsClient:  dnsClient,
 	}
 }
 
@@ -80,9 +89,22 @@ func (t *Target) Run(ctx context.Context, N, maxRPS int, progress func(requests,
 func (t *Target) flood(ctx context.Context) {
 	for addr := range t.requestCh {
 		atomic.AddInt64(&t.requests, 1)
-		if t.perform(ctx, addr) != nil {
+		if t.performHttp(ctx, addr) != nil {
 			atomic.AddInt64(&t.errors, 1)
 		}
+	}
+}
+
+func (t *Target) perform(ctx context.Context, addr string) error {
+	switch {
+	case strings.HasPrefix(addr, "dns://"):
+		return t.performDNS(ctx, addr)
+	case strings.HasPrefix(addr, "smtp://"):
+		fallthrough
+	case strings.HasPrefix(addr, "pop3://"):
+		fallthrough
+	default:
+		return t.performHttp(ctx, addr)
 	}
 }
 

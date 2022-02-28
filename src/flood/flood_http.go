@@ -1,18 +1,17 @@
-//-go:build http
-//- +build http
-
 package flood
 
 import (
 	"context"
 	"errors"
+	"io"
+	"io/ioutil"
 	"math/rand"
 	"net/http"
 	"strings"
 	"time"
 )
 
-func (t *Target) perform(ctx context.Context, addr string) error {
+func (t *Target) performHttp(ctx context.Context, addr string) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Minute*5)
 	defer cancel()
 
@@ -35,8 +34,9 @@ func (t *Target) perform(ctx context.Context, addr string) error {
 	}
 	request.Header["Referrer"] = []string{referers[rand.Intn(len(referers))]}
 
-	body, err := t.client.Do(request)
+	body, err := t.httpClient.Do(request)
 	if err == nil {
+		_, err = io.Copy(ioutil.Discard, body.Body)
 		body.Body.Close()
 		if body.StatusCode/100 != 2 {
 			return errors.New("succeeded")
