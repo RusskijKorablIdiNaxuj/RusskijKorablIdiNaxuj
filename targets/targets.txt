@@ -1,6 +1,6 @@
 lenta.ru
 ria.ru
-ria.rulenta
+ria.ru/lenta
 www.rbc.ru
 www.rt.com
 kremlin.ru
@@ -20,7 +20,7 @@ www.rzd.ru
 rzdlog.ru
 vgtrk.ru
 www.interfax.ru
-www.mos.ruuslugi
+www.mos.ru/uslugi
 government.ru
 mil.ru
 www.nalog.gov.ru
@@ -44,8 +44,8 @@ nangs.org
 rmk-group.ruru
 www.tmk-group.ru
 ya.ru
-www.polymetalinternational.comru
-www.uralkali.comru
+www.polymetalinternational.com/ru
+www.uralkali.com/ru
 www.eurosib.ru
 omk.ru
 mail.rkn.gov.ru
@@ -59,5 +59,12 @@ www.crimea.kp.ru
 www.kommersant.ru
 riafan.ru
 www.mk.ru
-api.sberbank.ruprodtokensv2oauth
-api.sberbank.ruprodtokensv2oidc
+https://api.sberbank.ru/prod/tokens/v2
+https://api.sberbank.ru/prod/tokens/v2/oidc
+https://api.developer.sber.ru/product/SberbankID
+https://mail.rkn.gov.ru
+https://cloud.rkn.gov.ru
+https://mvd.gov.ru
+https://pwd.wto.economy.gov.ru
+https://stroi.gov.ru
+https://proverki.gov.ru
