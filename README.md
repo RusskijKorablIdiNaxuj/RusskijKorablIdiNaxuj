@@ -13,7 +13,7 @@ It is possible to run CLI program using Docker.
 
 
 # Usage
-
+## Desktop App
 - `RusskijKorablIdiNaxuj.exe.zip` for Windows platforms 
 - `RusskijKorablIdiNaxuj.apk` for Android platforms 
 - `RusskijKorablIdiNaxuj.tar.xz` for Linux platforms 
@@ -21,6 +21,19 @@ It is possible to run CLI program using Docker.
 
 After executing the binary there will be a window similar to the one in the screenshot above. If you have a less formidable PC, then reduce "Workers" number to something like 500.
 Then you can click on the little triangle on the right and start the process.
+
+## Command line
+
+Just clone this repo, install Go and from clonned directory do (preferrably on a VPS that is close to Russia):
+```
+$ go run ./cmd/cli -i targets/targets.txt
+```
+
+NOTE: It may consume a lot of RAM as it tries to leave connections open for a as long time as possible. Minimum 4GB is needed.
+
+## Docker
+
+Docker image is not on Dockerhub yet. Not sure if it is useful.
 
 # Contribute targets
 
