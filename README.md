@@ -41,6 +41,11 @@ NOTE: It may consume a lot of RAM as it tries to leave connections open for a as
 
 Docker image is not on Dockerhub yet. Not sure if it is useful.
 
-# Contribute targets
+# Important resources
+
+- International Ukraine DDOS Alliance Telegram: https://t.me/ukraineddos
+- IT ARMY of Ukraine Telegram: https://t.me/itarmyofukraine2022
+
+# Contribute targets/Code
 
 Either create an issue or a PR.
