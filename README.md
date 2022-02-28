@@ -1,16 +1,17 @@
 ### Hi there 👋
 
-<!--
-**RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+![GUI](Capture.JPG)
 
-Here are some ideas to get you started:
+This repository was created in order to help defend against Russia propaganda during the war activities of Russian armies in Ukraine 2022.
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+There are two variants of the program:
+- GUI
+- CLI
+
+For GUI simply download the latest program for your operating system from the Releases section.
+It is possible to run CLI program using Docker.
+
+
+# How to contribute targets
+
+Either create an issue or a PR.
