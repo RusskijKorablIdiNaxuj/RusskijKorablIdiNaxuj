@@ -1,5 +1,7 @@
 ### Hi there 👋
 
+NOTE: If this repo becomes taken down, then it is a sign that GitHub supports war atrocities commited by putin!
+
 ![GUI](Capture.JPG)
 
 This repository was created in order to help defend against Russia propaganda during the war activities of Russian armies in Ukraine 2022.
