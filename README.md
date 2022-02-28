@@ -12,6 +12,16 @@ For GUI simply download the latest program for your operating system from the Re
 It is possible to run CLI program using Docker.
 
 
-# How to contribute targets
+# Usage
+
+- `RusskijKorablIdiNaxuj.exe.zip` for Windows platforms 
+- `RusskijKorablIdiNaxuj.apk` for Android platforms 
+- `RusskijKorablIdiNaxuj.tar.xz` for Linux platforms 
+- Please build manually for Mac-OS. 
+
+After executing the binary there will be a window similar to the one in the screenshot above. If you have a less formidable PC, then reduce "Workers" number to something like 500.
+Then you can click on the little triangle on the right and start the process.
+
+# Contribute targets
 
 Either create an issue or a PR.
