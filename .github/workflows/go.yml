@@ -25,6 +25,13 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: fyne-cross/dist/android/RusskijKorablIdiNaxuj.apk
+    - name: Calculate checksum
+      run: sha256sum fyne-cross/dist/android/RusskijKorablIdiNaxuj.apk >fyne-cross/dist/android/RusskijKorablIdiNaxuj.apk.sha256
+    - name: Upload checksum
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
+      with:
+        files: fyne-cross/dist/android/RusskijKorablIdiNaxuj.apk.sha256
   build_gui:
     strategy:
       matrix:
@@ -47,17 +54,11 @@ jobs:
       if: startsWith(github.ref, 'refs/tags/')
       with:
         files: fyne-cross/dist/${{matrix.os}}-amd64/RusskijKorablIdiNaxuj.*
-  
-  hashes:
-    needs: [build_android, build_gui]
-    runs-on: ubuntu-latest
-    steps:
-    - uses: MCJack123/ghaction-generate-release-hashes@v1
+    - name: Calculate checksum
+      run: sha256sum fyne-cross/dist/${{matrix.os}}-amd64/RusskijKorablIdiNaxuj.apk >fyne-cross/dist/${{matrix.os}}-amd64/RusskijKorablIdiNaxuj-${{matrix.os}}.sha256
+    - name: Upload checksum
+      uses: softprops/action-gh-release@v1
+      if: startsWith(github.ref, 'refs/tags/')
       with:
-        hash-type: sha512
-        file-name: hashes.txt
-    - uses: actions/upload-artifact@v2
-      with:
-        name: Asset Hashes
-        path: hashes.txt    
-    
+        files: fyne-cross/dist/${{matrix.os}}-amd64/RusskijKorablIdiNaxuj-${{matrix.os}}.sha256
+
