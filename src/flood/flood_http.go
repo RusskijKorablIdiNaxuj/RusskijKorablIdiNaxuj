@@ -12,7 +12,7 @@ import (
 )
 
 func (t *Target) performHttp(ctx context.Context, addr string) error {
-	ctx, cancel := context.WithTimeout(ctx, time.Minute*5)
+	ctx, cancel := context.WithTimeout(ctx, time.Millisecond*700)
 	defer cancel()
 
 	method := "GET"
@@ -21,10 +21,15 @@ func (t *Target) performHttp(ctx context.Context, addr string) error {
 	if err != nil {
 		return err
 	}
-	request.Header["Connection"] = []string{"Keep-Alive"}
-	request.Header["User-Agent"] = []string{userAgent()}
+	request.Header.Set("Connection", "Keep-Alive")
+	request.Header.Set("User-Agent", userAgent())
 	accept := acceptall[rand.Intn(len(acceptall))]
 	request.Header["User-Agent"] = []string{}
+	request.Header.Set("Pragma", "no-cache")
+	request.Header.Set("Cache-Control", "no-transform,no-store")
+	request.Header.Set("Keep-Alive", "timeout=1000")
+	request.Header.Set("Accept-Encoding", "gzip,deflate")
+	
 	for _, l := range strings.Split(accept, "\r\n") {
 		if l == "" {
 			continue
@@ -32,7 +37,7 @@ func (t *Target) performHttp(ctx context.Context, addr string) error {
 		h := strings.Split(l, ": ")
 		request.Header.Add(h[0], h[1])
 	}
-	request.Header["Referrer"] = []string{referers[rand.Intn(len(referers))]}
+	request.Header.Set("Referrer", referers[rand.Intn(len(referers))])
 
 	body, err := t.httpClient.Do(request)
 	if err == nil {
