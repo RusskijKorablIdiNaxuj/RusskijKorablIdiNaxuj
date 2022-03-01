@@ -13,6 +13,8 @@ import (
 	"github.com/miekg/dns"
 )
 
+// The target type that manages a target. A target can be a website, a dns, or something like that.
+// TODO: refactor this into an interface and make New create different concrete types that deal with a particular kind of target.
 type Target struct {
 	address   string
 	port      int
@@ -31,6 +33,7 @@ type Target struct {
 	dnsClient  *dns.Client
 }
 
+// Creates a target instance with all the configurations needed for an attack.
 func New(addr string) Target {
 	tr := &http.Transport{
 		MaxIdleConns:       10000,
@@ -54,10 +57,13 @@ func New(addr string) Target {
 	}
 }
 
+// Returns a name used in CLI multi-progressbar UI or GUI.
 func (t *Target) Name() string {
 	return t.address
 }
 
+// Executes an attack. Usually has to be called as a goroutine.
+// N is the number of concurrent workers and maxRPS is the target requests per second.
 func (t *Target) Run(ctx context.Context, N, maxRPS int, progress func(requests, errors int64)) {
 	t.requestCh = make(chan string, N)
 	timer := time.NewTicker(time.Second)
