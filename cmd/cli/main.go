@@ -16,7 +16,7 @@ import (
 
 func main() {
 	input := flag.String("i", "targets.txt", "A filename with a list of target HTTP/HTTPS addresses separated by newline; or an url.")
-	N := flag.Int("N", 1000, "Number of workers per target")
+	N := flag.Int("N", 200, "Number of workers per target")
 	maxRPS := flag.Int("t", 1000, "Target number of requests Per Second")
 	silent := flag.Bool("s", false, "Do not print out progress bars")
 
