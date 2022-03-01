@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"flood/src/flood"
+	"github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj/src/flood"
 	"fmt"
 	"strings"
 
