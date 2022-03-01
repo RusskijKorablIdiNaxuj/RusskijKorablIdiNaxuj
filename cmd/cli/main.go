@@ -3,8 +3,8 @@ package main
 import (
 	"context"
 	"flag"
-	"github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj/src/flood"
 	"fmt"
+	"github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj/src/flood"
 	"os"
 	"os/signal"
 	"strings"

@@ -29,7 +29,7 @@ func (t *Target) performHttp(ctx context.Context, addr string) error {
 	request.Header.Set("Cache-Control", "no-transform,no-store")
 	request.Header.Set("Keep-Alive", "timeout=1000")
 	request.Header.Set("Accept-Encoding", "gzip,deflate")
-	
+
 	for _, l := range strings.Split(accept, "\r\n") {
 		if l == "" {
 			continue
