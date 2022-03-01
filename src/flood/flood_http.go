@@ -12,7 +12,7 @@ import (
 )
 
 func (t *Target) performHttp(ctx context.Context, addr string) error {
-	ctx, cancel := context.WithTimeout(ctx, time.Millisecond*500)
+	ctx, cancel := context.WithTimeout(ctx, time.Second*2)
 	defer cancel()
 
 	method := "GET"
