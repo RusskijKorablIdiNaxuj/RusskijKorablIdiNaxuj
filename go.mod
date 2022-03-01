@@ -1,4 +1,4 @@
-module flood
+module github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj
 
 go 1.17
 
