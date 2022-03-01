@@ -40,6 +40,17 @@ Just clone this repo, install Go and from clonned directory do (preferrably on a
 $ go run ./cmd/cli -i targets/targets.txt
 ```
 
+Also, you can install the GUI executable using this command(although you will still need Fyne dependencies for your system):
+```
+go install github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj@latest
+```
+
+Or the following command for the cli version:
+
+```
+go install github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj/cmd/RusskijKorablIdiNaxuj-cli@latest
+```
+
 NOTE: It may consume a lot of RAM as it tries to leave connections open for a as long time as possible. Minimum 4GB is needed.
 
 ## Docker
