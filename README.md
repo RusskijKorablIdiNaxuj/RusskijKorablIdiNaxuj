@@ -1,5 +1,5 @@
 [![Github All Releases](https://img.shields.io/github/downloads/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj/total.svg)](https://github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj/releases)
-
+[![Go Report Card](https://goreportcard.com/badge/github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj)](https://goreportcard.com/report/github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj)
 
 ### Hi there 👋
 
