@@ -3,7 +3,7 @@ package main
 import (
 	"context"
 	"flag"
-	"flood/src/flood"
+	"github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj/src/flood"
 	"fmt"
 	"os"
 	"os/signal"
