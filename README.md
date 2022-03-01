@@ -1,3 +1,6 @@
+[![Github All Releases](https://img.shields.io/github/downloads/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj/total.svg)](https://github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj/releases)
+
+
 ### Hi there 👋
 
 If this repo becomes taken down, then it is a sign that GitHub supports war atrocities commited by putin!
