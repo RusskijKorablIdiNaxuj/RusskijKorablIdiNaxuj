@@ -87,3 +87,17 @@ jobs:
       with:
         files: fyne-cross/dist/linux-amd64/RusskijKorablIdiNaxuj-linux.sha256.txt
 
+  release:
+    runs-on: ubuntu-latest
+    needs: [build_android, build_gui_win, build_gui_linux]
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set output
+      id: vars
+      run: echo ::set-output name=tag::${GITHUB_REF#refs/*/}    
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: 1.17
+    - name: List on go proxy
+      run: GOPROXY=proxy.golang.org go list -m github.com/RusskijKorablIdiNaxuj/RusskijKorablIdiNaxuj@${{ steps.vars.outputs.tag }}
