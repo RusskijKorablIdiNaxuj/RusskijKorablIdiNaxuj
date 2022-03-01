@@ -37,7 +37,7 @@ Then you can click on the little triangle on the right and start the process.
 
 Just clone this repo, install Go and from clonned directory do (preferrably on a VPS that is close to Russia):
 ```
-$ go run ./cmd/cli -i targets/targets.txt
+$ go run ./cmd/RusskijKorablIdiNaxuj-cli -i targets/targets.txt
 ```
 
 Also, you can install the GUI executable using this command(although you will still need Fyne dependencies for your system):
