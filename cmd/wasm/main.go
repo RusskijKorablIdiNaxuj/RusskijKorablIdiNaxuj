@@ -34,7 +34,6 @@ func main() {
 		println("Failed to initialize a target list: ", err)
 		return
 	}
-	targetList[0] = "https://itohi.com"
 
 	doc := js.Global().Get("document")
 	root := doc.Call("getElementById", "targets")
