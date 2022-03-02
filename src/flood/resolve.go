@@ -1,9 +1,13 @@
+//go:build !wasm
+// +build !wasm
+
 package flood
 
 import (
 	"context"
 	"math/rand"
 	"net"
+	"net/http"
 	"net/url"
 	"time"
 )
@@ -11,6 +15,11 @@ import (
 var (
 	skipHostResolution = "skip"
 )
+
+const requestTimeout = time.Millisecond * 300
+
+func additionalHeaders(request *http.Request) {
+}
 
 func (t *Target) isHostResolved() bool {
 	t.Lock()
@@ -25,10 +34,11 @@ func (t *Target) isHostResolved() bool {
 }
 
 func (t *Target) replaceWithResolvedIP(addr string) string {
+	// return addr
 	t.RLock()
 	defer t.RUnlock()
 
-	if len(t.resolvedAddress) == 0 {
+	if t.resolvedAddress == nil {
 		return ""
 	}
 	if t.resolvedAddress[0] == skipHostResolution {

