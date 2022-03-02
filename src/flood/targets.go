@@ -69,10 +69,11 @@ func New(addr, proxy string) *Target {
 		ReadTimeout: time.Second,
 	}
 
+	addr = strings.TrimRight(strings.Trim(addr, " \r\n\t"), "/")
 	url, _ := url.Parse(addr)
 
 	ret := &Target{
-		address:       strings.TrimRight(strings.Trim(addr, " \r\n\t"), "/"),
+		address:       addr,
 		port:          80,
 		randomize:     true,
 		httpTransport: tr,
