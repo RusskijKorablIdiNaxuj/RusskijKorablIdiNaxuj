@@ -12,11 +12,9 @@ import (
 )
 
 func (t *Target) performHttp(ctx context.Context, addr string) error {
-	ctx, cancel := context.WithTimeout(ctx, time.Second*2)
+	ctx, cancel := context.WithTimeout(ctx, time.Millisecond*500)
 	defer cancel()
-
 	method := "GET"
-
 	request, err := http.NewRequestWithContext(ctx, method, addr, nil)
 	if err != nil {
 		return err

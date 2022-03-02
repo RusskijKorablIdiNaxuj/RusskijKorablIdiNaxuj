@@ -30,7 +30,7 @@ func main() {
 	// defer cancel()
 
 	rows := []fyne.CanvasObject{}
-	targets := []flood.Target{}
+	targets := []*flood.Target{}
 	progressVals := []binding.Float{}
 	progressTexts := []binding.String{}
 	progressBars := []*widget.ProgressBar{}

