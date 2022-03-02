@@ -56,20 +56,15 @@ func main() {
 	proxyOk := binding.NewBool()
 	proxy := binding.NewString()
 	numWorkers := binding.NewInt()
-	maxRequestsPerSecond := binding.NewInt()
-	proxy.Set("https://128.199.4.92:3129")
 
 	numWorkers.Set(100)
-	maxRequestsPerSecond.Set(1000)
 
 	pCheck := widget.NewCheckWithData("Proxy", proxyOk)
 	pCheck.Disable()
 	pEntry := widget.NewEntryWithData(proxy)
 	pEntry.PlaceHolder = "https://yourproxy:port"
 	nEntry := widget.NewEntryWithData(binding.IntToString(numWorkers))
-	rEntry := widget.NewEntryWithData(binding.IntToString(maxRequestsPerSecond))
 	nEntry.Validator = nil
-	rEntry.Validator = nil
 	menu := container.NewBorder(
 		nil,
 		container.NewBorder(
@@ -86,7 +81,6 @@ func main() {
 				for _i := range targets {
 					go func(i int) {
 						N, _ := numWorkers.Get()
-						maxRPS, _ := maxRequestsPerSecond.Get()
 						if proxyStr, err := proxy.Get(); err == nil && proxyStr != "" {
 							if err := targets[i].SetProxy(proxyStr); err == nil {
 								proxySetup = true
@@ -94,7 +88,7 @@ func main() {
 								proxySetup = false
 							}
 						}
-						targets[i].Run(ctx, N, maxRPS, func(requests, errors int64) {
+						targets[i].Run(ctx, N, func(requests, errors int64) {
 							if requests == 0 {
 								progressBars[i].Max = 1
 								progressVals[i].Set(1)
@@ -111,12 +105,6 @@ func main() {
 		),
 		container.NewAdaptiveGrid(
 			2,
-			container.NewBorder(
-				nil, nil,
-				nil,
-				widget.NewLabel("Requests / second"),
-				rEntry,
-			),
 			container.NewBorder(
 				nil, nil,
 				nil,
