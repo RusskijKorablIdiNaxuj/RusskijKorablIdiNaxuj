@@ -20,7 +20,6 @@ func main() {
 	input := flag.String("i", "targets.txt", "A filename with a list of target HTTP/HTTPS addresses separated by newline; or an url. Accept JSON files also.")
 	proxy := flag.String("p", "", "A proxy to use for the attack(in the form of https://proxy:port).")
 	N := flag.Int("N", 200, "Number of workers per target")
-	maxRPS := flag.Int("t", 1000, "Target number of requests Per Second")
 	silent := flag.Bool("s", false, "Do not print out progress bars")
 
 	flag.Parse()
@@ -72,7 +71,7 @@ func main() {
 		}
 
 		go func(t *flood.Target, b *mpb.Bar) {
-			t.Run(ctx, *N, *maxRPS, func(requests, errors int64) {
+			t.Run(ctx, *N, func(requests, errors int64) {
 				if !*silent {
 					b.SetTotal(int64(requests), false)
 					b.SetCurrent(int64(errors))
