@@ -52,6 +52,7 @@ func Statistics() (errors int64, requests int64) {
 // Creates a target instance with all the configurations needed for an attack.
 func New(addr, proxy string) *Target {
 	tr := &http.Transport{
+		Proxy:              http.ProxyFromEnvironment,
 		MaxIdleConns:       1000,
 		IdleConnTimeout:    30 * time.Second,
 		DisableCompression: true,
