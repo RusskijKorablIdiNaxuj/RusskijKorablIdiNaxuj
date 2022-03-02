@@ -28,7 +28,7 @@ func (t *Target) replaceWithResolvedIP(addr string) string {
 	t.RLock()
 	defer t.RUnlock()
 
-	if t.resolvedAddress == nil {
+	if len(t.resolvedAddress) == 0 {
 		return ""
 	}
 	if t.resolvedAddress[0] == skipHostResolution {
