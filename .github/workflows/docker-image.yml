@@ -28,4 +28,4 @@ jobs:
       with:
         context: .
         push: true
-        tags: russkijkorablidinaxuj/russkijkorablidinaxuj:${{ github.sha }},russkijkorablidinaxuj/russkijkorablidinaxuj:latest
+        tags: ghcr.io/${{env.REPOSITORY}}:${{ github.sha }},ghcr.io/${{env.REPOSITORY}}:latest
