@@ -23,4 +23,5 @@ jobs:
       with:
         context: .
         push: true
-        tags: russkijkorablidinaxuj/russkij-korabl-idi-naxuj:${{ github.sha }},russkijkorablidinaxuj/russkij-korabl-idi-naxuj:latest
+        repository: russkijkorablidinaxuj/russkijkorablidinaxuj
+        tags: russkij-korabl-idi-naxuj:${{ github.sha }},russkij-korabl-idi-naxuj:latest
