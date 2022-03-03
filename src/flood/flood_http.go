@@ -11,8 +11,6 @@ import (
 )
 
 func (t *Target) performHttp(ctx context.Context, addr string) error {
-	ctx, cancel := context.WithTimeout(ctx, requestTimeout)
-	defer cancel()
 	method := "GET"
 	request, err := http.NewRequestWithContext(ctx, method, addr, nil)
 	if err != nil {
