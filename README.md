@@ -37,7 +37,7 @@ Then you can click on the little triangle on the right and start the process.
 
 Just clone this repo, install Go and from clonned directory do (preferrably on a VPS that is close to Russia):
 ```
-$ go run ./cmd/RusskijKorablIdiNaxuj-cli -i targets/targets.txt
+go run ./cmd/RusskijKorablIdiNaxuj-cli -i targets/targets.txt
 ```
 
 Also, you can install the GUI executable using this command(although you will still need Fyne dependencies for your system):
@@ -57,12 +57,12 @@ NOTE: It may consume a lot of RAM as it tries to leave connections open for a as
 
 You can run docker for all targets at the same time using this command:
 ```
-$ docker run -d --restart unless-stopped ghcr.io/russkijkorablidinaxuj/russkijkorablidinaxuj:latest
+docker run -d --restart unless-stopped ghcr.io/russkijkorablidinaxuj/russkijkorablidinaxuj:latest
 ```
 
 If it is crashing due to OOM:
 ```
-$ docker run -d --restart unless-stopped ghcr.io/russkijkorablidinaxuj/russkijkorablidinaxuj:latest -N 1000
+docker run -d --restart unless-stopped ghcr.io/russkijkorablidinaxuj/russkijkorablidinaxuj:latest -N 1000
 ```
 
 You can also specify different target lists using `-i app/{target}.json`, where `{target}` can be one of:
@@ -74,7 +74,7 @@ You can also specify different target lists using `-i app/{target}.json`, where 
 
 It is possible to see attack progress using this command:
 ```
-$ docker run -i --restart unless-stopped ghcr.io/russkijkorablidinaxuj/russkijkorablidinaxuj:latest -N 1000 -i /app/dns.json -s=false
+docker run -i --restart unless-stopped ghcr.io/russkijkorablidinaxuj/russkijkorablidinaxuj:latest -N 1000 -i /app/dns.json -s=false
 ```
 The output will be something like this:
 ```
