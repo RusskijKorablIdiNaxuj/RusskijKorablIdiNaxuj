@@ -54,9 +54,14 @@ func New(addr, proxy string) *Target {
 	tr := &http.Transport{
 		Proxy:              http.ProxyFromEnvironment,
 		MaxIdleConns:       1000,
-		IdleConnTimeout:    30 * time.Second,
+		IdleConnTimeout:    3 * time.Minute,
 		DisableCompression: true,
 		TLSClientConfig:    &tls.Config{InsecureSkipVerify: true},
+		DialContext: (&net.Dialer{
+			Timeout:   time.Second * 10,
+			KeepAlive: 3 * time.Minute,
+		}).DialContext,
+		TLSHandshakeTimeout: 10 * time.Second,
 	}
 	client := &http.Client{
 		Transport: tr,
@@ -66,7 +71,7 @@ func New(addr, proxy string) *Target {
 	}
 
 	dnsClient := &dns.Client{
-		DialTimeout: time.Millisecond * 700,
+		DialTimeout: time.Second * 10,
 		ReadTimeout: time.Second,
 	}
 
