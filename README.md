@@ -33,6 +33,8 @@ It is possible to run CLI program using Docker.
 After executing the binary there will be a window similar to the one in the screenshot above. If you have a less formidable PC, then reduce "Workers" number to something like 500.
 Then you can click on the little triangle on the right and start the process.
 
+**NOTE:** Windows may complain that the app is not signed or from unknown publisher. This is normal since it was not signed by a legitimate Windows certificate for obvious reasons(well, developers must register and obtain this certificate from Microsoft when they want to publish their apps).
+
 ## Command line
 
 Just clone this repo, install Go and from clonned directory do (preferrably on a VPS that is close to Russia):
